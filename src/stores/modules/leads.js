@@ -5,8 +5,10 @@ export default {
   state: {
     leads: [],
     activationModalStatus: false,
+    statusUpdateModalStatus: false,
     counselors:[],
-    assignedError:[]
+    assignedError:[],
+    statusError:[]
   },
   getters: {
     allLeads: state => state.leads,
@@ -54,7 +56,23 @@ export default {
       } catch (error) {
         console.error('Error updating lead status:', error);
       }
-    }
+    },
+    async updateStatus({ commit,dispatch }, { status, leadId }) {
+      try {
+        await api.put(`/leads/${leadId}/status`, { 'status':status });
+        dispatch('fetchLeads')
+      } catch (error) {
+        console.error('Error updating lead status:', error);
+      }
+    },
+    async moveToApplication({ commit,dispatch }, { leadId }) {
+      try {
+        await api.post(`/leads/${leadId}/application`);
+        dispatch('fetchLeads')
+      } catch (error) {
+        console.error('Error updating lead status:', error);
+      }
+    },
   },
 
 };

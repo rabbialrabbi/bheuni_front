@@ -1,8 +1,8 @@
 <script setup>
-import { CirclePlusIcon,EditIcon,TrashIcon } from 'vue-tabler-icons';
+import { CirclePlusIcon,EditIcon,TrashIcon,PencilIcon} from 'vue-tabler-icons';
 import CounselorAssignForm from "@/components/lead/CounselorAssignForm.vue";
+import StatusUpdateForm from "@/components/lead/StatusUpdateForm.vue";
 import confirmation from "@/_helper/alert";
-
 import { useStore } from 'vuex';
 
 const store = useStore();
@@ -12,11 +12,11 @@ let name = ref('')
 let search = ref('')
 let page = reactive({ title: 'Lead List' })
 let itemsPerPage = ref(10)
-let product = ref(null)
 let leads = computed(()=>store.state.leads.leads)
 let totalLeadItem = 0
 let selectedLead = ref()
 let selectedCounselor = ref()
+let selectedStatus = ref('')
 const breadcrumbs= [
   {
     title: 'Lead',
@@ -39,7 +39,7 @@ const headers = [
   },
   { title: 'Email', key: 'email', align: 'end' },
   { title: 'Phone', key: 'phone', align: 'end' },
-  { title: 'Status', key: 'status', align: 'end' },
+  { title: 'Status', key: 'status_name', align: 'end' },
   ...counselor,
   { title: 'Action', key: 'actions', align: 'center', sortable: false },
 ]
@@ -76,12 +76,22 @@ const AssignCounselor = (leadId)=>{
   selectedLead.value = leadId
   store.state.leads.activationModalStatus = true
 }
+const UpdateStatus = (leadId)=>{
+  let lead = store.state.leads.leads.find(x=>x.id == leadId)
+  if(lead && lead.status){
+    selectedStatus.value = lead.status
+  }else{
+    selectedStatus.value = null
+  }
+  selectedLead.value = leadId
+  store.state.leads.statusUpdateModalStatus = true
+}
 
-const deleteProduct = async (productId)=>{
-  let alert =  confirmation.delete()
-  alert.then(res=>{
+const moveToApplication = async (leadId)=>{
+  let alert =  confirmation.general('Do you want to move to application')
+  alert.then(async res=>{
     if(res.isConfirmed)
-      productStore.deleteProduct(productId)
+      await store.dispatch('leads/moveToApplication',{leadId})
   })
 }
 </script>
@@ -93,17 +103,6 @@ const deleteProduct = async (productId)=>{
       <v-card
         class="mx-auto"
       >
-        <template v-slot:title>
-          <v-btn
-            class="mt-4"
-            color="success"
-            prepend-icon="mdi-plus"
-            text="Create"
-            variant="flat"
-            flat
-            @click="product=null;"
-          ></v-btn>
-        </template>
 
         <v-card-text class="pt-4">
           <VRow justify="end">
@@ -139,16 +138,28 @@ const deleteProduct = async (productId)=>{
                   class="actionBtn"
                   size="small"
                   @click="AssignCounselor(item.id)"
+                  title="Assign counselor"
                 >
-                  <EditIcon/>
+                  <PencilIcon/>
+                </IconBtn>
+                <IconBtn
+                  v-if="$can('change', 'lead-status')"
+                  class="actionBtn"
+                  size="small"
+                  @click="UpdateStatus(item.id)"
+                  title="Update status"
+                >
+                  <BrowserCheckIcon/>
                 </IconBtn>
 
                 <IconBtn
+                  v-if="$can('move', 'lead-application')"
                   class="actionBtn"
                   size="small"
-                  @click="deleteProduct(item.product_id)"
+                  @click="moveToApplication(item.id)"
+                  title="Move to application section"
                 >
-                  <TrashIcon/>
+                  <NavigationIcon />
                 </IconBtn>
 
               </div>
@@ -163,6 +174,12 @@ const deleteProduct = async (productId)=>{
       :lead="selectedLead"
       :counselor="selectedCounselor"
     ></CounselorAssignForm>
+  </v-dialog>
+  <v-dialog v-model="store.state.leads.statusUpdateModalStatus" max-width="600px">
+    <StatusUpdateForm
+      :lead="selectedLead"
+      :status="selectedStatus"
+    ></StatusUpdateForm>
   </v-dialog>
 
 </template>
