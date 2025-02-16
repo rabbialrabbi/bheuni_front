@@ -8,10 +8,15 @@
     "lint": "eslint . --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@casl/ability": "^6.7.3",
+    "@casl/vue": "^2.2.2",
     "@mdi/font": "7.4.47",
     "axios": "^1.7.7",
+    "cookie-es": "^1.2.2",
     "core-js": "^3.37.1",
+    "destr": "^2.0.3",
     "roboto-fontface": "*",
+    "universal-cookie": "^7.2.2",
     "vue": "^3.4.31",
     "vue-sweetalert2": "^5.0.11",
     "vue-tabler-icons": "^2.21.0",

@@ -18,14 +18,14 @@ const sidebarItem = [
   { divider: true },
   { header: 'POS' },
   {
-    title: 'Product',
+    title: 'Leads',
     icon: PackageIcon,
-    to: '/product/list'
+    to: '/leads'
   },
   {
-    title: 'Suppler',
+    title: 'Application',
     icon: BuildingStoreIcon,
-    to: '/supplier/list'
+    to: '/applications'
   },
   {
     title: 'Purchase',

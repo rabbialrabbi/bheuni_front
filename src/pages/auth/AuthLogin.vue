@@ -1,8 +1,11 @@
-<script setup lang="ts">
+<script setup>
 import { ref } from 'vue';
-import { useAuthStore } from '@/stores/auth';
+import { router } from '@/router';
+import api from "@/_helper/api";
+import {useCookie} from "@/_helper/useCookie";
+import {useAbility} from "@/plugins/casl/composables/useAbility";
 
-const authStore = useAuthStore()
+const ability = useAbility()
 const valid = ref(false);
 const show1 = ref(false);
 const formData = ref({
@@ -12,20 +15,44 @@ const formData = ref({
 });
 
 const passwordRules = ref([
-  (v: string) => !!v || 'Password is required',
-  (v: string) => (v && v.length <= 10) || 'Password must be less than 10 characters'
+  (v) => !!v || 'Password is required',
+  (v) => (v && v.length <= 10) || 'Password must be less than 10 characters'
 ]);
-const emailRules = ref([(v: string) => !!v || 'E-mail is required', (v: string) => /.+@.+\..+/.test(v) || 'E-mail must be valid']);
+const emailRules = ref([(v) => !!v || 'E-mail is required', (v) => /.+@.+\..+/.test(v) || 'E-mail must be valid']);
 
 const refForm = ref()
-function login() {
-  valid.value = true
-  let status = refForm.value?.validate()
-  status.then(x => {
-    if (x.valid) {
-      authStore.login(formData.value);
-    }
-  })
+async function login() {
+  try {
+    valid.value = true
+    let status = refForm.value?.validate()
+    status.then(async x => {
+      const res = await api.post(`/login`, formData.value);
+
+      const {user,token,permissions} = res.data.data
+
+      useCookie('userAbilityRules').value = permissions
+      ability.update(permissions)
+      useCookie('userData').value = user
+      useCookie('authToken').value = token
+
+      router.push('/')
+    })
+
+  } catch (err) {
+    console.error(err)
+  }
+
+  // valid.value = true
+  // let status = refForm.value?.validate()
+  // status.then(async x => {
+  //   if (x.valid) {
+  //     const res = await api.post(`/login`, formData.value);
+  //     let {user,token} = res.data.data
+  //     this.user = user;
+  //     localStorage.setItem('authToken', token);
+  //
+  //   }
+  // })
 }
 </script>
 

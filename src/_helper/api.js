@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { router } from '@/router';
+import {useCookie} from "@/_helper/useCookie";
 
 let api =   axios.create({
   baseURL: import.meta.env.VITE_API_URL ? `${import.meta.env.VITE_API_URL}/api` : 'http://localhost:8002/api',
@@ -12,7 +13,7 @@ api.interceptors.request.use(
   function (config) {
     // Get the latest token from localStorage
 
-    const token = localStorage.getItem('authToken');
+    const token = useCookie('authToken');
     // If a token exists, attach it to the request headers
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
@@ -31,7 +32,7 @@ api.interceptors.response.use(
   (error) => {
     if (error.response && error.response.status === 401) {
 
-      localStorage.removeItem('authToken');
+      useCookie('authToken').value = ''
 
       router.push('/auth/login');
     }
