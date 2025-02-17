@@ -35,7 +35,7 @@ const tab = ref('1');
       <v-tabs-window v-model="tab" class="z-1">
         <v-tabs-window-item value="1">
           <v-row>
-            <v-col cols="6">
+            <v-col cols="8">
               <h2 class="text-h1 font-weight-medium">
                 {{value}}
                 <a href="#">

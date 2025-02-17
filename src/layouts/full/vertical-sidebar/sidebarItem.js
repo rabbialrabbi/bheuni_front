@@ -13,7 +13,7 @@ const sidebarItem = [
   {
     title: 'Default',
     icon: DashboardIcon,
-    to: '/dashboard/default'
+    to: '/'
   },
   { divider: true },
   { header: 'POS' },
