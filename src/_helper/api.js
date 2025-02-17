@@ -13,7 +13,7 @@ api.interceptors.request.use(
   function (config) {
     // Get the latest token from localStorage
 
-    const token = useCookie('authToken');
+    const token = useCookie('authToken').value;
     // If a token exists, attach it to the request headers
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;

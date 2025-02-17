@@ -4,6 +4,7 @@ export default {
   namespaced: true,
   state: {
     leads: [],
+    totalLeads: 0,
     activationModalStatus: false,
     statusUpdateModalStatus: false,
     counselors:[],
@@ -24,19 +25,16 @@ export default {
     SET_COUNSELOR(state, counselors) {
       state.counselors = counselors;
     },
-    ADD_LEAD(state, lead) {
-      state.leads.push(lead);
+    SET_TOTAL_LEADS(state, totalLeads) {
+      state.totalLeads = totalLeads;
     },
-    UPDATE_LEAD_STATUS(state, { id, status }) {
-      const lead = state.leads.find(lead => lead.id === id);
-      if (lead) lead.status = status;
-    }
   },
   actions: {
     async fetchLeads({ commit },config= {}) {
       try {
         const response = await api.get('/leads');
         commit('SET_LEADS', response.data.data);
+        commit('SET_TOTAL_LEADS', response.data.meta.total);
       } catch (error) {
         console.error('Error fetching leads:', error);
       }

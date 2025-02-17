@@ -1,7 +1,5 @@
 <script setup>
-import { CirclePlusIcon,EditIcon,TrashIcon,PencilIcon} from 'vue-tabler-icons';
-import CounselorAssignForm from "@/components/lead/CounselorAssignForm.vue";
-import StatusUpdateForm from "@/components/lead/StatusUpdateForm.vue";
+import StatusUpdateForm from "@/components/application/StatusUpdateForm.vue";
 import confirmation from "@/_helper/alert";
 import { useStore } from 'vuex';
 
@@ -10,16 +8,15 @@ const store = useStore();
 let loading = ref(true)
 let name = ref('')
 let search = ref('')
-let page = reactive({ title: 'Lead List' })
+let page = reactive({ title: 'Application List' })
 let itemsPerPage = ref(10)
-let leads = computed(()=>store.state.leads.leads)
-let totalLeadItem = 0
-let selectedLead = ref()
-let selectedCounselor = ref()
+let applications = computed(()=>store.state.applications.applications)
+let totalApplicationItem = 0
+let selectedApplication = ref()
 let selectedStatus = ref('')
 const breadcrumbs= [
   {
-    title: 'Lead',
+    title: 'Application',
     disabled: false,
     href: '#'
   },
@@ -39,8 +36,8 @@ const headers = [
   },
   { title: 'Email', key: 'email', align: 'end' },
   { title: 'Phone', key: 'phone', align: 'end' },
-  { title: 'Status', key: 'status_name', align: 'end' },
   ...counselor,
+  { title: 'Status', key: 'status_name', align: 'end' },
   { title: 'Action', key: 'actions', align: 'center', sortable: false },
 ]
 
@@ -50,7 +47,7 @@ watch(name,(newData)=>{
 })
 
 onMounted(async ()=> {
-  await store.dispatch('leads/fetchLeads')
+  await store.dispatch('applications/fetchApplications')
 })
 const loadItems = async ({ page, itemsPerPage, sortBy }) =>{
   loading.value = true
@@ -62,37 +59,18 @@ const loadItems = async ({ page, itemsPerPage, sortBy }) =>{
       q: name.value
     }
   }
-  await store.dispatch('leads/fetchLeads',config)
+  await store.dispatch('applications/fetchApplications',config)
   loading.value = false
 }
-
-const AssignCounselor = (leadId)=>{
-  let lead = store.state.leads.leads.find(x=>x.id == leadId)
-  if(lead && lead.counselor_id){
-    selectedCounselor.value = lead.counselor_id
-  }else{
-    selectedCounselor.value = null
-  }
-  selectedLead.value = leadId
-  store.state.leads.activationModalStatus = true
-}
-const UpdateStatus = (leadId)=>{
-  let lead = store.state.leads.leads.find(x=>x.id == leadId)
-  if(lead && lead.status){
-    selectedStatus.value = lead.status
+const UpdateStatus = (applicationId)=>{
+  let application = store.state.applications.applications.find(x=>x.id == applicationId)
+  if(application && application.status){
+    selectedStatus.value = application.status
   }else{
     selectedStatus.value = null
   }
-  selectedLead.value = leadId
-  store.state.leads.statusUpdateModalStatus = true
-}
-
-const moveToApplication = async (leadId)=>{
-  let alert =  confirmation.general('Do you want to move to application')
-  alert.then(async res=>{
-    if(res.isConfirmed)
-      await store.dispatch('leads/moveToApplication',{leadId})
-  })
+  selectedApplication.value = applicationId
+  store.state.applications.statusUpdateModalStatus = true
 }
 </script>
 
@@ -123,8 +101,8 @@ const moveToApplication = async (leadId)=>{
           <v-data-table-server
             v-model:items-per-page="itemsPerPage"
             :headers="headers"
-            :items="leads"
-            :items-length="totalLeadItem"
+            :items="applications"
+            :items-length="store.state.applications.totalApplications"
             :loading="loading"
             :search="search"
             item-value="name"
@@ -134,16 +112,7 @@ const moveToApplication = async (leadId)=>{
             <template #item.actions="{ item }">
               <div class="text-no-wrap">
                 <IconBtn
-                  v-if="$can('assign', 'lead')"
-                  class="actionBtn"
-                  size="small"
-                  @click="AssignCounselor(item.id)"
-                  title="Assign counselor"
-                >
-                  <PencilIcon/>
-                </IconBtn>
-                <IconBtn
-                  v-if="$can('change', 'lead-status')"
+                  v-if="$can('change', 'application-status')"
                   class="actionBtn"
                   size="small"
                   @click="UpdateStatus(item.id)"
@@ -151,17 +120,6 @@ const moveToApplication = async (leadId)=>{
                 >
                   <BrowserCheckIcon/>
                 </IconBtn>
-
-                <IconBtn
-                  v-if="$can('move', 'lead-application')"
-                  class="actionBtn"
-                  size="small"
-                  @click="moveToApplication(item.id)"
-                  title="Move to application section"
-                >
-                  <NavigationIcon />
-                </IconBtn>
-
               </div>
             </template>
           </v-data-table-server>
@@ -169,15 +127,9 @@ const moveToApplication = async (leadId)=>{
       </v-card>
     </v-col>
   </v-row>
-  <v-dialog v-model="store.state.leads.activationModalStatus" max-width="600px">
-    <CounselorAssignForm
-      :lead="selectedLead"
-      :counselor="selectedCounselor"
-    ></CounselorAssignForm>
-  </v-dialog>
-  <v-dialog v-model="store.state.leads.statusUpdateModalStatus" max-width="600px">
+  <v-dialog v-model="store.state.applications.statusUpdateModalStatus" max-width="600px">
     <StatusUpdateForm
-      :lead="selectedLead"
+      :application="selectedApplication"
       :status="selectedStatus"
     ></StatusUpdateForm>
   </v-dialog>

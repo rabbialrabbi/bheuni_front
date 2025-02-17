@@ -1,9 +1,11 @@
 import { createStore } from 'vuex';
-import leads from './modules/leads';
+import leads from '@/stores/modules/leads';
+import applications from "@/stores/modules/applications";
 
 const store = createStore({
   modules: {
-    leads
+    leads,
+    applications
   }
 });
 

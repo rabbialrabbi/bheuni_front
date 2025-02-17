@@ -17,6 +17,12 @@ const MainRoutes = {
       path: '/leads',
       component: () => import('@/pages/lead/LeadList.vue'),
       meta: { subject: 'lead' ,action: 'view'}
+    },
+    {
+      name: 'Application',
+      path: '/applications',
+      component: () => import('@/pages/application/ApplicationList.vue'),
+      meta: { subject: 'application' ,action: 'view'}
     }
   ]
 };

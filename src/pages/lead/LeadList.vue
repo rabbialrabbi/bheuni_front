@@ -124,7 +124,7 @@ const moveToApplication = async (leadId)=>{
             v-model:items-per-page="itemsPerPage"
             :headers="headers"
             :items="leads"
-            :items-length="totalLeadItem"
+            :items-length="store.state.leads.totalLeads"
             :loading="loading"
             :search="search"
             item-value="name"
