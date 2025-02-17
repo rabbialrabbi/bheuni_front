@@ -23,6 +23,12 @@ const MainRoutes = {
       path: '/applications',
       component: () => import('@/pages/application/ApplicationList.vue'),
       meta: { subject: 'application' ,action: 'view'}
+    },
+    {
+      name: 'Kanban',
+      path: '/leads/kanban',
+      component: () => import('@/pages/lead/KanbanBoard.vue'),
+      meta: { subject: 'lead' ,action: 'view'}
     }
   ]
 };

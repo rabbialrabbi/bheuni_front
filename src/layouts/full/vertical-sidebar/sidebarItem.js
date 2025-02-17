@@ -20,28 +20,23 @@ const sidebarItem = [
   {
     title: 'Leads',
     icon: PackageIcon,
-    to: '/leads'
+    children: [
+      {
+        title: 'Lead List',
+        icon: CircleIcon,
+        to: '/leads'
+      },
+      {
+        title: 'KanBan',
+        icon: CircleIcon,
+        to: '/leads/kanban'
+      }
+    ]
   },
   {
     title: 'Application',
-    icon: BuildingStoreIcon,
-    to: '/applications'
-  },
-  {
-    title: 'Purchase',
     icon: ShoppingBagIcon,
-    children: [
-      {
-        title: 'Purchase List',
-        icon: CircleIcon,
-        to: '/purchase/list'
-      },
-      {
-        title: 'Purchase Create',
-        icon: CircleIcon,
-        to: '/purchase/create'
-      }
-    ]
+    to: '/applications'
   }
 ];
 

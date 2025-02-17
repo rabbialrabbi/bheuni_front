@@ -12,10 +12,13 @@ export default {
     statusError:[]
   },
   getters: {
-    allLeads: state => state.leads,
     counselorOptions: state => state.counselors.map(c => {
       return {title:c.name,value:c.id}
     }),
+    kanbans_in_progress: (state) => state.leads.filter(x=>x.status == '1'),
+    kanbans_bad_timing: (state) => state.leads.filter(x=>x.status == '2'),
+    kanbans_not_interested: (state) => state.leads.filter(x=>x.status == '3'),
+    kanbans_not_qualified: (state) => state.leads.filter(x=>x.status == '4'),
 
   },
   mutations: {
@@ -27,6 +30,11 @@ export default {
     },
     SET_TOTAL_LEADS(state, totalLeads) {
       state.totalLeads = totalLeads;
+    },
+    UPDATE_KANBAN(state, {id,status}) {
+      let i = state.leads.findIndex(obj => obj.id == id);
+      console.log(status)
+      state.leads[i].status = status
     },
   },
   actions: {
